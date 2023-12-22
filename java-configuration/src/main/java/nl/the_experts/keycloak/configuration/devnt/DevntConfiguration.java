@@ -1,20 +1,17 @@
-package nl.the_experts.keycloak.configuration.example;
+package nl.the_experts.keycloak.configuration.devnt;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
+import nl.the_experts.keycloak.configuration.devnt.clients.IoTClientConfiguration;
 import org.keycloak.admin.client.Keycloak;
 
-/**
- * Configuration for Example realm.
- */
 @JBossLog
 @AllArgsConstructor
-public class ExampleConfiguration {
-    static final String REALM_NAME = "example";
-    static final String REALM_DISPLAY_NAME = "example display name";
+public class DevntConfiguration {
+    static final String REALM_NAME = "devnt";
+    static final String REALM_DISPLAY_NAME = "devnt.gr";
 
     private final Keycloak keycloak;
-
     /**
      * Configures the example realm.
      */
@@ -24,6 +21,7 @@ public class ExampleConfiguration {
         log.info("-----------------------------------------------");
 
         new RealmConfiguration(keycloak.realms()).configure(REALM_NAME, REALM_DISPLAY_NAME);
+        new IoTClientConfiguration(keycloak.realm(REALM_NAME).clients()).configure();
 
         log.info("-----------------------------------------------");
         log.infof("Finished configuration of realm '%s'.%n", REALM_NAME);

@@ -1,4 +1,4 @@
-package nl.the_experts.keycloak.configuration.example;
+package nl.the_experts.keycloak.configuration.devnt;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
@@ -19,10 +19,12 @@ public class RealmConfiguration {
      */
     public void configure(String realmName, String realmDisplayName) {
         List<RealmRepresentation> realms = realmsResource.findAll();
+
         if (realms.isEmpty() || realms.stream().noneMatch(realm -> realm.getId().equals(realmName))) {
             log.infof("Realm does not yet exist, creating for realm: %s", realmName);
             createRealm(realmName, realmDisplayName, realmsResource);
         }
+
         updateRealm(realmName);
     }
 
