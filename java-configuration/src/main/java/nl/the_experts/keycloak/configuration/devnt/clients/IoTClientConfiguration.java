@@ -4,65 +4,56 @@ import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
 import org.keycloak.admin.client.resource.ClientsResource;
-import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 
-import java.util.List;
+import java.util.Arrays;
 
 @JBossLog
 @AllArgsConstructor
 public class IoTClientConfiguration {
 
-    private static final String CLIENT_ID = "iot-client";
-
-    private static final String CLIENT_NAME = "IOT client";
-
-//    private RealmResource realm;
-
-    private ClientsResource _clientsResource;
+    private final IoTClientConfigurationOptions options;
+    private final ClientsResource resource;
 
     public void configure() {
-        var clients = _clientsResource.findAll();
+        var clients = resource.findAll();
 
-        if (clients.isEmpty() || clients.stream().noneMatch(client -> client.getId().equals(CLIENT_ID))) {
-            createClient(CLIENT_ID, CLIENT_NAME);
+        if (clients.isEmpty() || clients.stream().noneMatch(client -> client.getId().equals(options.getId()))) {
+            createClient(options.getId(), options.getName());
         }
 
-        updateClient(CLIENT_ID);
+        updateClient(options.getId(), options.getAuthType(), options.getClientSECRET(), options.getRedirectUris());
     }
 
 
-    private void createClient(String clientId, String clientName) {
+    private void createClient(String id, String name) {
         var representation = new ClientRepresentation();
 
-        representation.setId(clientId);
-        representation.setClientId(clientId);
-        representation.setName(clientName);
+        representation.setId(id);
+        representation.setClientId(id);
+        representation.setName(name);
         representation.setEnabled(false);
 
-        var response = _clientsResource.create(representation);
+        var response = resource.create(representation);
 
         if(response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            throw new RuntimeException(String.format("Could not create client '%s'", CLIENT_ID));
+            throw new RuntimeException(String.format("Could not create client '%s'", id));
         }
 
-        log.infof("Created client '%s'", CLIENT_ID);
-
-//        realm.clients().create(representation);
-//        log.infof("Created client '%s' for realm '%s'", CLIENT_ID, realm.toRepresentation().getId());
+        log.infof("Created client '%s'", id);
     }
 
 
-    private void updateClient(String clientId) {
+    private void updateClient(String clientId, String authenticatorType, String clientSecret, String redirectUris) {
 
         var representation = new ClientRepresentation();
 
-        representation.setClientAuthenticatorType("client-secret");
-        representation.setSecret("yBdcTkJEcxSDvhakDvjfuvLXJ9rfKEOz");
-        representation.setRedirectUris(List.of("*"));
+        representation.setClientAuthenticatorType(authenticatorType);
+        representation.setSecret(clientSecret);
+        representation.setRedirectUris(Arrays.stream(redirectUris.split(",")).toList());
         representation.setEnabled(true);
 
-        var resource = _clientsResource.get(clientId);
+        var resource = this.resource.get(clientId);
 
         resource.update(representation);
 

@@ -12,7 +12,7 @@ import org.keycloak.admin.client.Keycloak;
 @AllArgsConstructor
 public class KeycloakConfiguration {
 
-    private final Keycloak keycloak;
+    private final KeycloakConfigurationProperties configuration;
 
     /**
      * Starts configuration of Keycloak.
@@ -22,7 +22,14 @@ public class KeycloakConfiguration {
         log.info("Starting Java configuration");
         log.info("-----------------------------------------------");
 
-        new DevntConfiguration(keycloak).configure();
+        var keycloak = KeycloakClientBuilder.create(
+                        configuration.get("KEYCLOAK_SERVER"),
+                        configuration.get("KEYCLOAK_USER"),
+                        configuration.get("KEYCLOAK_PASSWORD"),
+                        configuration.get("KEYCLOAK_REALM"))
+                .getClient();
+
+        new DevntConfiguration(configuration, keycloak).configure();
 
         log.info("-----------------------------------------------");
         log.infof("Finished Java configuration without errors.");

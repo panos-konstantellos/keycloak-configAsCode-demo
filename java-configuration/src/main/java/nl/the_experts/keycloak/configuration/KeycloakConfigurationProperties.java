@@ -35,9 +35,9 @@ public class KeycloakConfigurationProperties {
      * @return New {@link KeycloakConfigurationProperties} instance.
      */
     public static KeycloakConfigurationProperties fromEnv() {
-        Map<String, String> systemProperties = System.getProperties().entrySet().stream()
+        var systemProperties = System.getProperties().entrySet().stream()
                 .collect(Collectors.toMap(e -> convertKey((String) e.getKey()), e -> (String) e.getValue()));
-        Map<String, String> configMap = new HashMap<>(System.getenv());
+        var configMap = new HashMap<>(System.getenv());
         configMap.putAll(systemProperties);
 
         return new KeycloakConfigurationProperties(configMap);

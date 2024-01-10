@@ -2,11 +2,8 @@ package nl.the_experts.keycloak.configuration.devnt;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
-import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RealmsResource;
 import org.keycloak.representations.idm.RealmRepresentation;
-
-import java.util.List;
 
 @JBossLog
 @AllArgsConstructor
@@ -18,7 +15,7 @@ public class RealmConfiguration {
      * Configures the realm, first validates if the realm exists and if none exists, creates the realm.
      */
     public void configure(String realmName, String realmDisplayName) {
-        List<RealmRepresentation> realms = realmsResource.findAll();
+        var realms = realmsResource.findAll();
 
         if (realms.isEmpty() || realms.stream().noneMatch(realm -> realm.getId().equals(realmName))) {
             log.infof("Realm does not yet exist, creating for realm: %s", realmName);
@@ -29,7 +26,7 @@ public class RealmConfiguration {
     }
 
     private void createRealm(String realmName, String displayName, RealmsResource realmsResource) {
-        RealmRepresentation realmRepresentation = new RealmRepresentation();
+        var realmRepresentation = new RealmRepresentation();
         realmRepresentation.setDisplayName(displayName);
         realmRepresentation.setId(realmName);
         realmRepresentation.setRealm(realmName);
@@ -40,11 +37,12 @@ public class RealmConfiguration {
     }
 
     private void updateRealm(String realmName) {
-        RealmRepresentation realmRepresentation = new RealmRepresentation();
+        var realmRepresentation = new RealmRepresentation();
         realmRepresentation.setBruteForceProtected(true);
+        realmRepresentation.setLoginWithEmailAllowed(false);
         realmRepresentation.setEnabled(true);
 
-        RealmResource realmResource = realmsResource.realm(realmName);
+        var realmResource = realmsResource.realm(realmName);
         realmResource.update(realmRepresentation);
     }
 }
