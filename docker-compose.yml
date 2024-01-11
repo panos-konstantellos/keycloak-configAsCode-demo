@@ -18,6 +18,8 @@ services:
 
   keycloak:
     build: .
+    image: ${REGISTRY_HOST}/keycloak-devnt
+    container_name: keycloak
     depends_on:
       postgres:
         condition: service_healthy
@@ -29,7 +31,6 @@ services:
       - KC_HEALTH_ENABLED
       - KC_METRICS_ENABLED
 #      - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=*:8787,server=y,suspend=n"
-    container_name: keycloak
     entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
     ports:
       - "8080:8080"
