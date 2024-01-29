@@ -50,9 +50,12 @@ public class DevntActiveDirectoryConfiguration {
 
         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
 
-            var reason = response.hasEntity()
-                    ? response.readEntity(String.class)
-                    : "";
+            log.error(String.format("Request URI: %s\n" +
+                            "Response Status: %s\n",
+                            "Response Body: %s",
+                    response.getLocation().toString(),
+                    response.getStatusInfo().getFamily().toString(),
+                    response.hasEntity() ? response.readEntity(String.class) : ""));
 
             throw new RuntimeException(String.format("Could not create component '%s' of type `%s`", options.getId(), COMPONENT_TYPE));
         }

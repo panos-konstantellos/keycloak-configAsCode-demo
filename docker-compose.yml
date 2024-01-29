@@ -8,6 +8,7 @@ services:
       - POSTGRES_DB=keycloak
       - POSTGRES_PASSWORD=${KC_DB_PASSWORD}
       - POSTGRES_USER=${KC_DB_USERNAME}
+    restart: always
     ports:
       - '5432:5432'
     healthcheck:
@@ -31,6 +32,7 @@ services:
       - KC_HEALTH_ENABLED
       - KC_METRICS_ENABLED
 #      - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=*:8787,server=y,suspend=n"
+    restart: always
     entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
     ports:
       - "8080:8080"
