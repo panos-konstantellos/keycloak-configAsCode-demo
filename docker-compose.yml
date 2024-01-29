@@ -1,9 +1,15 @@
 version: '3.9'
 
+#volumes:
+#  postgres_data:
+#    driver: local
+
 services:
   postgres:
     image: postgres:15.4
     container_name: postgres
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=keycloak
       - POSTGRES_PASSWORD=${KC_DB_PASSWORD}
