@@ -3,8 +3,8 @@ package nl.the_experts.keycloak.configuration.devnt;
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
 import nl.the_experts.keycloak.configuration.KeycloakConfigurationProperties;
-import nl.the_experts.keycloak.configuration.devnt.clients.IoTClientConfiguration;
-import nl.the_experts.keycloak.configuration.devnt.clients.IoTClientConfigurationOptions;
+import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfiguration;
+import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfigurationOptions;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfiguration;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfigurationOptions;
 import org.keycloak.admin.client.Keycloak;
@@ -19,12 +19,20 @@ public class DevntConfiguration {
         var realmName = configuration.get("DEVNT_REALM_NAME");
         var realmDisplayName = configuration.get("DEVNT_REALM_DISPLAY_NAME");
 
-        var clientOptions = IoTClientConfigurationOptions.builder()
+        var iotClientOptions = ClientConfigurationOptions.builder()
                 .id(configuration.get("DEVNT_CLIENT_IOT_ID"))
                 .name(configuration.get("DEVNT_CLIENT_IOT_NAME"))
                 .authType(configuration.get("DEVNT_CLIENT_IOT_AUTH_TYPE"))
                 .clientSECRET(configuration.get("DEVNT_CLIENT_IOT_SECRET"))
                 .redirectUris(configuration.get("DEVNT_CLIENT_IOT_REDIRECT_URIS"))
+                .build();
+
+        var nextCloudClientOptions = ClientConfigurationOptions.builder()
+                .id(configuration.get("DEVNT_CLIENT_NEXTCLOUD_ID"))
+                .name(configuration.get("DEVNT_CLIENT_NEXTCLOUD_NAME"))
+                .authType(configuration.get("DEVNT_CLIENT_NEXTCLOUD_AUTH_TYPE"))
+                .clientSECRET(configuration.get("DEVNT_CLIENT_NEXTCLOUD_SECRET"))
+                .redirectUris(configuration.get("DEVNT_CLIENT_NEXTCLOUD_REDIRECT_URIS"))
                 .build();
 
         var adOptions = DevntActiveDirectoryConfigurationOptions.builder()
@@ -42,7 +50,8 @@ public class DevntConfiguration {
         log.info("-----------------------------------------------");
 
         new RealmConfiguration(keycloak.realms()).configure(realmName, realmDisplayName);
-        new IoTClientConfiguration(clientOptions, keycloak.realm(realmName).clients()).configure();
+        new ClientConfiguration(iotClientOptions, keycloak.realm(realmName).clients()).configure();
+        new ClientConfiguration(nextCloudClientOptions, keycloak.realm(realmName).clients()).configure();
         new DevntActiveDirectoryConfiguration(adOptions, keycloak.realm(realmName).components()).configure();
 
         log.info("-----------------------------------------------");

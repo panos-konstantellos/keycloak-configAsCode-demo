@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class IoTClientConfigurationOptions {
+public class ClientConfigurationOptions {
     private final String id;
     private final String name;
     private final String authType;

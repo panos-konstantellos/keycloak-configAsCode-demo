@@ -10,9 +10,9 @@ import java.util.Arrays;
 
 @JBossLog
 @AllArgsConstructor
-public class IoTClientConfiguration {
+public class ClientConfiguration {
 
-    private final IoTClientConfigurationOptions options;
+    private final ClientConfigurationOptions options;
     private final ClientsResource resource;
 
     public void configure() {
