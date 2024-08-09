@@ -3,7 +3,6 @@ package nl.the_experts.keycloak.configuration;
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
 import nl.the_experts.keycloak.configuration.devnt.DevntConfiguration;
-import org.keycloak.admin.client.Keycloak;
 
 /**
  * Class to configure Keycloak.

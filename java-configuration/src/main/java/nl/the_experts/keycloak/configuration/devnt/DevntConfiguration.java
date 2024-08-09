@@ -5,9 +5,12 @@ import lombok.extern.jbosslog.JBossLog;
 import nl.the_experts.keycloak.configuration.KeycloakConfigurationProperties;
 import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfiguration;
 import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfigurationOptions;
+import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfigurationOptionsValidator;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfiguration;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfigurationOptions;
 import org.keycloak.admin.client.Keycloak;
+
+import java.util.Optional;
 
 @JBossLog
 @AllArgsConstructor
@@ -24,7 +27,7 @@ public class DevntConfiguration {
                 .name(configuration.get("DEVNT_CLIENT_IOT_NAME"))
                 .authType(configuration.get("DEVNT_CLIENT_IOT_AUTH_TYPE"))
                 .clientSECRET(configuration.get("DEVNT_CLIENT_IOT_SECRET"))
-                .redirectUris(configuration.get("DEVNT_CLIENT_IOT_REDIRECT_URIS"))
+                .redirectUris(Optional.ofNullable(configuration.get("DEVNT_CLIENT_IOT_REDIRECT_URIS")).orElse("*"))
                 .build();
 
         var nextCloudClientOptions = ClientConfigurationOptions.builder()
@@ -32,8 +35,18 @@ public class DevntConfiguration {
                 .name(configuration.get("DEVNT_CLIENT_NEXTCLOUD_NAME"))
                 .authType(configuration.get("DEVNT_CLIENT_NEXTCLOUD_AUTH_TYPE"))
                 .clientSECRET(configuration.get("DEVNT_CLIENT_NEXTCLOUD_SECRET"))
-                .redirectUris(configuration.get("DEVNT_CLIENT_NEXTCLOUD_REDIRECT_URIS"))
+                .redirectUris(Optional.ofNullable(configuration.get("DEVNT_CLIENT_NEXTCLOUD_REDIRECT_URIS")).orElse("*"))
                 .build();
+
+        var clientConfigurationOptionsValidator = new ClientConfigurationOptionsValidator();
+        try {
+            clientConfigurationOptionsValidator.validate(iotClientOptions);
+            clientConfigurationOptionsValidator.validate(nextCloudClientOptions);
+        } catch (Exception e) {
+            log.error("Error validating client configuration options", e);
+
+            throw new RuntimeException(e);
+        }
 
         var adOptions = DevntActiveDirectoryConfigurationOptions.builder()
                 .realmName(realmName)

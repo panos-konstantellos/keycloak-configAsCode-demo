@@ -10,5 +10,6 @@ public class ClientConfigurationOptions {
     private final String name;
     private final String authType;
     private final String clientSECRET;
-    private final String redirectUris;
+    @Builder.Default
+    private final String redirectUris = "";
 }
