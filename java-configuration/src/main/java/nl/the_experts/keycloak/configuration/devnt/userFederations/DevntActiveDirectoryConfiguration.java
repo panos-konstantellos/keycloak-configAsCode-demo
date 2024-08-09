@@ -1,7 +1,6 @@
 package nl.the_experts.keycloak.configuration.devnt.userFederations;
 
-import jakarta.ws.rs
-.core.Response;
+import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 import lombok.extern.jbosslog.JBossLog;
 import org.keycloak.admin.client.resource.ComponentResource;
@@ -52,7 +51,7 @@ public class DevntActiveDirectoryConfiguration {
 
             log.error(String.format("Request URI: %s\n" +
                             "Response Status: %s\n",
-                            "Response Body: %s",
+                    "Response Body: %s",
                     response.getLocation().toString(),
                     response.getStatusInfo().getFamily().toString(),
                     response.hasEntity() ? response.readEntity(String.class) : ""));
@@ -78,6 +77,7 @@ public class DevntActiveDirectoryConfiguration {
         replace(config, "bindDn", options.getBindDN());
         replace(config, "bindCredential", options.getBindCredentials());
         replace(config, "usersDn", options.getUsersDN());
+        replace(config, "customUserSearchFilter", options.getUsersFilter());
         replace(config, "usernameLDAPAttribute", "sAMAccountName");
         replace(config, "uuidLDAPAttribute", "objectGUID");
         replace(config, "rdnLDAPAttribute", "cn");
@@ -120,6 +120,9 @@ public class DevntActiveDirectoryConfiguration {
 
     private static void replace(MultivaluedHashMap<String, String> map, String key, String value) {
         map.remove(key);
-        map.add(key, value);
+
+        if (value != null) {
+            map.add(key, value);
+        }
     }
 }

@@ -56,6 +56,7 @@ public class DevntConfiguration {
                 .bindDN(configuration.get("DEVNT_AD_BIND_DN"))
                 .bindCredentials(configuration.get("DEVNT_AD_BIND_CREDENTIALS"))
                 .usersDN(configuration.get("DEVNT_AD_USERS_DN"))
+                .usersFilter(configuration.get("DEVNT_AD_USERS_FILTER"))
                 .build();
 
         log.info("-----------------------------------------------");

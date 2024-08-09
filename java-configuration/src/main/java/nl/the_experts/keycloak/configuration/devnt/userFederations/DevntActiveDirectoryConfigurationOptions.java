@@ -13,4 +13,5 @@ public class DevntActiveDirectoryConfigurationOptions {
     private final String bindDN;
     private final String bindCredentials;
     private final String usersDN;
+    private final String usersFilter;
 }
