@@ -90,6 +90,7 @@ public class DevntActiveDirectoryConfiguration {
 
         fixAttributeMapping(componentsResource, resource, "username", "sAMAccountName");
         fixAttributeMapping(componentsResource, resource, "firstName", "givenName");
+        fixAttributeMapping(componentsResource, resource, "lastName", "sn");
     }
 
     private static void fixAttributeMapping(ComponentsResource componentsResource, ComponentResource resource, String userModelAttribute, String ldapAttribute) {
