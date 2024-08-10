@@ -79,6 +79,10 @@ services:
       - DEVNT_AD_BIND_CREDENTIALS
       - DEVNT_AD_USERS_DN
       - DEVNT_AD_USERS_FILTER
+      - DEVNT_AD_GROUP_MAPPER_ID
+      - DEVNT_AD_GROUP_MAPPER_NAME
+      - DEVNT_AD_GROUP_MAPPER_DN
+      - DEVNT_AD_GROUP_MAPPER_FILTER
     working_dir: /opt/keycloak-config
     entrypoint: java -Dkeycloak.server=${KEYCLOAK_CONFIG_SERVER_URI} -Dkeycloak.realm=${KEYCLOAK_CONFIG_REALM} -Dkeycloak.user=${KEYCLOAK_ADMIN} -Dkeycloak.password=${KEYCLOAK_ADMIN_PASSWORD} -jar java-configuration.jar
     #    Uncomment if you want to enable debug mode, in IntelliJ Run Configurations add a Remote JVM Debug execution on port 5005

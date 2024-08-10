@@ -8,8 +8,10 @@ import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfigurationOp
 import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfigurationOptionsValidator;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfiguration;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfigurationOptions;
+import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryGroupMapperOptions;
 import org.keycloak.admin.client.Keycloak;
 
+import java.util.List;
 import java.util.Optional;
 
 @JBossLog
@@ -57,6 +59,14 @@ public class DevntConfiguration {
                 .bindCredentials(configuration.get("DEVNT_AD_BIND_CREDENTIALS"))
                 .usersDN(configuration.get("DEVNT_AD_USERS_DN"))
                 .usersFilter(configuration.get("DEVNT_AD_USERS_FILTER"))
+                .attributeMappers(List.of(
+                        DevntActiveDirectoryGroupMapperOptions.builder()
+                                .id(configuration.get("DEVNT_AD_GROUP_MAPPER_ID"))
+                                .name(configuration.get("DEVNT_AD_GROUP_MAPPER_NAME"))
+                                .groupsDN(configuration.get("DEVNT_AD_GROUP_MAPPER_DN"))
+                                .groupsFilter(configuration.get("DEVNT_AD_GROUP_MAPPER_FILTER"))
+                                .build()
+                ))
                 .build();
 
         log.info("-----------------------------------------------");

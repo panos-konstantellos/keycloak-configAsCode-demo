@@ -8,6 +8,7 @@ import org.keycloak.admin.client.resource.ComponentsResource;
 import org.keycloak.common.util.MultivaluedHashMap;
 import org.keycloak.representations.idm.ComponentRepresentation;
 
+import java.util.Optional;
 
 @JBossLog
 @AllArgsConstructor
@@ -48,7 +49,6 @@ public class DevntActiveDirectoryConfiguration {
         var response = componentsResource.add(representation);
 
         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-
             log.error(String.format("Request URI: %s\n" +
                             "Response Status: %s\n",
                     "Response Body: %s",
@@ -91,6 +91,78 @@ public class DevntActiveDirectoryConfiguration {
         fixAttributeMapping(componentsResource, resource, "username", "sAMAccountName");
         fixAttributeMapping(componentsResource, resource, "firstName", "givenName");
         fixAttributeMapping(componentsResource, resource, "lastName", "sn");
+
+        for (var mapperOptions : options.getAttributeMappers()) {
+            if (mapperOptions instanceof DevntActiveDirectoryGroupMapperOptions groupMapperOptions) {
+                var groupMappers = componentsResource.query(options.getId(), "org.keycloak.storage.ldap.mappers.LDAPStorageMapper");
+                if (groupMappers.stream().noneMatch(x -> x.getId().equals(groupMapperOptions.getId()))) {
+                    createGroupLdapMapper(componentsResource, options.getId(), groupMapperOptions);
+                }
+
+                updateGroupLdapMapper(componentsResource, groupMapperOptions);
+            }
+        }
+    }
+
+    private static void createGroupLdapMapper(ComponentsResource componentsResource, String parentId, DevntActiveDirectoryGroupMapperOptions options) {
+        var representation = new ComponentRepresentation();
+
+        representation.setId(options.getId());
+        representation.setParentId(parentId);
+        representation.setProviderType("org.keycloak.storage.ldap.mappers.LDAPStorageMapper");
+        representation.setProviderId("group-ldap-mapper");
+        representation.setName(options.getName());
+
+        var config = new MultivaluedHashMap<String, String>();
+
+        config.add("groups.dn", options.getGroupsDN());
+        config.add("mode", "READ_ONLY");
+
+        representation.setConfig(config);
+
+        var response = componentsResource.add(representation);
+
+        if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+            log.error(String.format("""
+                            Request URI: %s
+                            Response Status: %s
+                            Response Body: %s""",
+                    Optional.ofNullable(response.getLocation()).map(Object::toString).orElse(""),
+                    response.getStatusInfo().getFamily().toString(),
+                    response.hasEntity() ? response.readEntity(String.class) : ""));
+
+            throw new RuntimeException(String.format("Could not create group-ldap-mapper %s for '%s'", options.getName(), parentId));
+        }
+    }
+
+    private static void updateGroupLdapMapper(ComponentsResource componentsResource, DevntActiveDirectoryGroupMapperOptions options) {
+        var resource = componentsResource.component(options.getId());
+
+        var representation = resource.toRepresentation();
+
+        representation.setProviderType("org.keycloak.storage.ldap.mappers.LDAPStorageMapper");
+        representation.setProviderId("group-ldap-mapper");
+        representation.setName(options.getName());
+
+        var config = representation.getConfig();
+
+        replace(config, "groups.dn", options.getGroupsDN());
+        replace(config, "group.name.ldap.attribute", "cn");
+        replace(config, "group.object.classes", "group");
+        replace(config, "preserve.group.inheritance", Boolean.toString(true));
+        replace(config, "ignore.missing.groups", Boolean.toString(false));
+        replace(config, "membership.ldap.attribute", "member");
+        replace(config, "membership.attribute.type", "DN");
+        replace(config, "membership.user.ldap.attribute", "sAMAccountName");
+        replace(config, "groups.ldap.filter", options.getGroupsFilter());
+        replace(config, "mode", "READ_ONLY");
+        replace(config, "user.roles.retrieve.strategy", "LOAD_GROUPS_BY_MEMBER_ATTRIBUTE_RECURSIVELY");
+        replace(config, "memberof.ldap.attribute", "memberOf");
+        replace(config, "mapped.group.attributes", "");
+
+        representation.setConfig(config);
+
+        resource.update(representation);
     }
 
     private static void fixAttributeMapping(ComponentsResource componentsResource, ComponentResource resource, String userModelAttribute, String ldapAttribute) {
@@ -104,18 +176,19 @@ public class DevntActiveDirectoryConfiguration {
                 .findFirst()
                 .orElse(null);
 
-        if (attributeMappingRepresentation != null) {
-
-            var cfg = attributeMappingRepresentation.getConfig();
-
-            replace(cfg, "ldap.attribute", ldapAttribute);
-
-            attributeMappingRepresentation.setConfig(cfg);
-
-            var attributeMappingResource = componentsResource.component(attributeMappingRepresentation.getId());
-
-            attributeMappingResource.update(attributeMappingRepresentation);
+        if (attributeMappingRepresentation == null) {
+            throw new NullPointerException(String.format("Could not find attribute mapping for user model attribute '%s'", userModelAttribute));
         }
+
+        var cfg = attributeMappingRepresentation.getConfig();
+
+        replace(cfg, "ldap.attribute", ldapAttribute);
+
+        attributeMappingRepresentation.setConfig(cfg);
+
+        var attributeMappingResource = componentsResource.component(attributeMappingRepresentation.getId());
+
+        attributeMappingResource.update(attributeMappingRepresentation);
     }
 
     private static void replace(MultivaluedHashMap<String, String> map, String key, String value) {

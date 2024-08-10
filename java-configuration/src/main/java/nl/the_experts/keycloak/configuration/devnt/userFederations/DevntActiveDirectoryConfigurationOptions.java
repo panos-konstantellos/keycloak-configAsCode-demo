@@ -3,9 +3,12 @@ package nl.the_experts.keycloak.configuration.devnt.userFederations;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Builder
-public class DevntActiveDirectoryConfigurationOptions {
+public final class DevntActiveDirectoryConfigurationOptions {
     private final String realmName;
     private final String id;
     private final String name;
@@ -14,4 +17,6 @@ public class DevntActiveDirectoryConfigurationOptions {
     private final String bindCredentials;
     private final String usersDN;
     private final String usersFilter;
+    @Builder.Default
+    private final List<DevntActiveDirectoryMapperOptions> attributeMappers = new ArrayList<>();
 }
