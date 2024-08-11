@@ -1,30 +1,20 @@
 package nl.the_experts.keycloak.configuration.devnt.clients;
 
-import com.google.common.base.Strings;
+import nl.the_experts.keycloak.validation.ValidationResult;
 
 public final class ClientConfigurationOptionsValidator {
 
-    public boolean validate(ClientConfigurationOptions options) throws Exception {
-        if (Strings.isNullOrEmpty(options.getId())) {
-            throw new Exception("Client ID is required.");
-        }
+    public ValidationResult validate(ClientConfigurationOptions options) throws Exception {
+        return ValidationResult.create()
+                .validate(() -> isNullOrEmpty(options.getId()), "Client ID is required.")
+                .validate(() -> isNullOrEmpty(options.getName()), "Client name is required.")
+                .validate(() -> isNullOrEmpty(options.getAuthType()), "Client authenticator type is required.")
+                .validate(() -> isNullOrEmpty(options.getClientSECRET()), "Client secret is required.")
+                .validate(() -> isNullOrEmpty(options.getRedirectUris()), "Client redirect URIs are required.")
+                .build();
+    }
 
-        if (Strings.isNullOrEmpty(options.getName())) {
-            throw new Exception("Client name is required.");
-        }
-
-        if (Strings.isNullOrEmpty(options.getAuthType())) {
-            throw new Exception("Client authenticator type is required.");
-        }
-
-        if (Strings.isNullOrEmpty(options.getClientSECRET())) {
-            throw new Exception("Client secret is required.");
-        }
-
-        if (Strings.isNullOrEmpty(options.getRedirectUris())) {
-            throw new Exception("Client redirect URIs are required.");
-        }
-
-        return true;
+    private static boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
     }
 }
