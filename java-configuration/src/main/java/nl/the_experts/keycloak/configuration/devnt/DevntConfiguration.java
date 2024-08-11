@@ -9,6 +9,7 @@ import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfigurationOp
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfiguration;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryConfigurationOptions;
 import nl.the_experts.keycloak.configuration.devnt.userFederations.DevntActiveDirectoryGroupMapperOptions;
+import nl.the_experts.keycloak.validation.ValidationException;
 import org.keycloak.admin.client.Keycloak;
 
 import java.util.List;
@@ -42,12 +43,12 @@ public class DevntConfiguration {
 
         var clientConfigurationOptionsValidator = new ClientConfigurationOptionsValidator();
         try {
-            clientConfigurationOptionsValidator.validate(iotClientOptions);
-            clientConfigurationOptionsValidator.validate(nextCloudClientOptions);
-        } catch (Exception e) {
+            clientConfigurationOptionsValidator.validate(iotClientOptions).throwIfInvalid();
+            clientConfigurationOptionsValidator.validate(nextCloudClientOptions).throwIfInvalid();
+        } catch (ValidationException e) {
             log.error("Error validating client configuration options", e);
 
-            throw new RuntimeException(e);
+            throw e;
         }
 
         var adOptions = DevntActiveDirectoryConfigurationOptions.builder()

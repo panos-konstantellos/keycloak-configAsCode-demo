@@ -11,6 +11,12 @@ public interface ValidationResult {
         return new ValidationResultBuilder();
     }
 
+    default void throwIfInvalid() throws ValidationException {
+        if (!success()) {
+            throw new ValidationException(errors());
+        }
+    }
+
     static ValidationResult ok() {
         return new ValidationResultImpl(List.of());
     }
@@ -23,4 +29,3 @@ public interface ValidationResult {
         return new ValidationResultImpl(errors);
     }
 }
-

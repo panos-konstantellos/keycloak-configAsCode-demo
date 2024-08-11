@@ -11,7 +11,7 @@ class ValidationResultImpl implements ValidationResult {
         Objects.requireNonNull(errors, "Errors cannot be null.");
 
         this.errors = errors;
-        this.success = !errors.isEmpty();
+        this.success = errors.isEmpty();
     }
 
     public boolean success() {
