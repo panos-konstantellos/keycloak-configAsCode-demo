@@ -7,6 +7,7 @@ import org.keycloak.representations.idm.RealmRepresentation;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 
 @AllArgsConstructor
 public class RealmConfiguration {
@@ -67,11 +68,12 @@ public class RealmConfiguration {
 
         smtpConfig.put("host", options.getHost());
         smtpConfig.put("port", String.valueOf(options.getPort()));
+        smtpConfig.put("auth", Optional.ofNullable(options.getUser()).map(x -> Boolean.TRUE).orElse(Boolean.FALSE).toString());
         smtpConfig.put("user", options.getUser());
         smtpConfig.put("password", options.getPassword());
         smtpConfig.put("from", options.getFrom());
-        smtpConfig.put("ssl", "true");
-        smtpConfig.put("starttls", "true");
+        smtpConfig.put("ssl", Boolean.valueOf(options.isSsl()).toString());
+        smtpConfig.put("starttls", Boolean.valueOf(options.isStartTls()).toString());
 
         realmRepresentation.setSmtpServer(smtpConfig);
     }
