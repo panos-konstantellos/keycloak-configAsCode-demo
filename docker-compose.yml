@@ -37,6 +37,7 @@ services:
       - KC_METRICS_ENABLED
     restart: always
     entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
+#    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local --db postgres --db-url-host postgres --db-username ${KC_DB_USERNAME} --db-password ${KC_DB_PASSWORD}
     ports:
       - "8080:8080"
     healthcheck:

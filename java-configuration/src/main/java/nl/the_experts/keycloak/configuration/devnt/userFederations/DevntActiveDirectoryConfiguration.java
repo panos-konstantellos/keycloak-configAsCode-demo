@@ -6,7 +6,10 @@ import lombok.extern.jbosslog.JBossLog;
 import org.keycloak.admin.client.resource.ComponentResource;
 import org.keycloak.admin.client.resource.ComponentsResource;
 import org.keycloak.common.util.MultivaluedHashMap;
+import org.keycloak.models.LDAPConstants;
 import org.keycloak.representations.idm.ComponentRepresentation;
+import org.keycloak.storage.ldap.mappers.membership.group.GroupLDAPStorageMapperFactory;
+import org.keycloak.storage.ldap.mappers.membership.group.GroupMapperConfig;
 
 import java.util.Optional;
 
@@ -68,21 +71,24 @@ public class DevntActiveDirectoryConfiguration {
 
         var config = representation.getConfig();
 
-        replace(config, "editMode", "READ_ONLY");
-        replace(config, "importEnabled", Boolean.toString(true));
-        replace(config, "enabled", Boolean.toString(true));
 
-        replace(config, "connectionUrl", options.getHost());
-        replace(config, "vendor", "ad");
-        replace(config, "bindDn", options.getBindDN());
-        replace(config, "bindCredential", options.getBindCredentials());
-        replace(config, "usersDn", options.getUsersDN());
-        replace(config, "customUserSearchFilter", options.getUsersFilter());
-        replace(config, "usernameLDAPAttribute", "sAMAccountName");
-        replace(config, "uuidLDAPAttribute", "objectGUID");
-        replace(config, "rdnLDAPAttribute", "cn");
-        replace(config, "userObjectClasses", "person, organizationalPerson, user");
-        replace(config, "trustEmail", Boolean.toString(true));
+        replace(config, LDAPConstants.EDIT_MODE, "READ_ONLY");
+        replace(config, "importEnabled", Boolean.toString(true));
+        replace(config, LDAPConstants.ENABLED, Boolean.toString(true));
+
+        replace(config, LDAPConstants.CONNECTION_URL, options.getHost());
+        replace(config, LDAPConstants.VENDOR, "ad");
+        replace(config, LDAPConstants.BIND_DN, options.getBindDN());
+        replace(config, LDAPConstants.BIND_CREDENTIAL, options.getBindCredentials());
+        replace(config, LDAPConstants.USERS_DN, options.getUsersDN());
+        replace(config, LDAPConstants.CUSTOM_USER_SEARCH_FILTER, options.getUsersFilter());
+        replace(config, LDAPConstants.USERNAME_LDAP_ATTRIBUTE, "sAMAccountName");
+        replace(config, LDAPConstants.UUID_LDAP_ATTRIBUTE, "objectGUID");
+        replace(config, LDAPConstants.RDN_LDAP_ATTRIBUTE, "cn");
+        replace(config, LDAPConstants.USER_OBJECT_CLASSES, "person, organizationalPerson, user");
+        replace(config, LDAPConstants.TRUST_EMAIL, Boolean.toString(true));
+        replace(config, "importEnabled", Boolean.toString(true));
+        replace(config, LDAPConstants.SYNC_REGISTRATIONS, Boolean.toString(false));
 
         representation.setConfig(config);
 
@@ -110,7 +116,7 @@ public class DevntActiveDirectoryConfiguration {
         representation.setId(options.getId());
         representation.setParentId(parentId);
         representation.setProviderType("org.keycloak.storage.ldap.mappers.LDAPStorageMapper");
-        representation.setProviderId("group-ldap-mapper");
+        representation.setProviderId(GroupLDAPStorageMapperFactory.PROVIDER_ID);
         representation.setName(options.getName());
 
         var config = new MultivaluedHashMap<String, String>();
@@ -141,24 +147,26 @@ public class DevntActiveDirectoryConfiguration {
         var representation = resource.toRepresentation();
 
         representation.setProviderType("org.keycloak.storage.ldap.mappers.LDAPStorageMapper");
-        representation.setProviderId("group-ldap-mapper");
+        representation.setProviderId(GroupLDAPStorageMapperFactory.PROVIDER_ID);
         representation.setName(options.getName());
 
         var config = representation.getConfig();
 
-        replace(config, "groups.dn", options.getGroupsDN());
-        replace(config, "group.name.ldap.attribute", "cn");
-        replace(config, "group.object.classes", "group");
-        replace(config, "preserve.group.inheritance", Boolean.toString(true));
-        replace(config, "ignore.missing.groups", Boolean.toString(false));
-        replace(config, "membership.ldap.attribute", "member");
-        replace(config, "membership.attribute.type", "DN");
-        replace(config, "membership.user.ldap.attribute", "sAMAccountName");
-        replace(config, "groups.ldap.filter", options.getGroupsFilter());
-        replace(config, "mode", "READ_ONLY");
-        replace(config, "user.roles.retrieve.strategy", "LOAD_GROUPS_BY_MEMBER_ATTRIBUTE_RECURSIVELY");
-        replace(config, "memberof.ldap.attribute", "memberOf");
-        replace(config, "mapped.group.attributes", "");
+        replace(config, GroupMapperConfig.GROUPS_DN, options.getGroupsDN());
+        replace(config, GroupMapperConfig.GROUP_NAME_LDAP_ATTRIBUTE, "cn");
+        replace(config, GroupMapperConfig.GROUP_OBJECT_CLASSES, "group");
+        replace(config, GroupMapperConfig.PRESERVE_GROUP_INHERITANCE, Boolean.toString(true));
+        replace(config, GroupMapperConfig.IGNORE_MISSING_GROUPS, Boolean.toString(false));
+        replace(config, GroupMapperConfig.MEMBERSHIP_LDAP_ATTRIBUTE, "member");
+        replace(config, GroupMapperConfig.MEMBERSHIP_ATTRIBUTE_TYPE, "DN");
+        replace(config, GroupMapperConfig.MEMBERSHIP_USER_LDAP_ATTRIBUTE, "sAMAccountName");
+        replace(config, GroupMapperConfig.GROUPS_LDAP_FILTER, options.getGroupsFilter());
+        replace(config, GroupMapperConfig.MODE, "READ_ONLY");
+        replace(config, GroupMapperConfig.USER_ROLES_RETRIEVE_STRATEGY, "LOAD_GROUPS_BY_MEMBER_ATTRIBUTE_RECURSIVELY");
+        replace(config, GroupMapperConfig.MEMBEROF_LDAP_ATTRIBUTE, "memberOf");
+        replace(config, GroupMapperConfig.MAPPED_GROUP_ATTRIBUTES, "");
+        replace(config, GroupMapperConfig.DROP_NON_EXISTING_GROUPS_DURING_SYNC, Boolean.toString(false));
+
 
         representation.setConfig(config);
 

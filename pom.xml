@@ -118,6 +118,11 @@
                 <artifactId>keycloak-services</artifactId>
                 <version>${keycloak.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-ldap-federation</artifactId>
+                <version>${keycloak.version}</version>
+            </dependency>
 
             <!--Fix versions-->
             <!-- CVE fixes -->
