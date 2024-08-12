@@ -1,8 +1,9 @@
 package nl.the_experts.keycloak.configuration.devnt.clients;
 
+import nl.the_experts.keycloak.configuration.devnt.OptionsValidator;
 import nl.the_experts.keycloak.validation.ValidationResult;
 
-public final class ClientConfigurationOptionsValidator {
+public final class ClientOptionsValidator implements OptionsValidator<ClientConfigurationOptions> {
 
     public ValidationResult validate(ClientConfigurationOptions options) {
         return ValidationResult.create()

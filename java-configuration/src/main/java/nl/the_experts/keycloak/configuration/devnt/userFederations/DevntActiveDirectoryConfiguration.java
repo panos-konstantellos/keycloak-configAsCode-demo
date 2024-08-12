@@ -2,7 +2,8 @@ package nl.the_experts.keycloak.configuration.devnt.userFederations;
 
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import lombok.extern.jbosslog.JBossLog;
+import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfiguration;
+import org.jboss.logging.Logger;
 import org.keycloak.admin.client.resource.ComponentResource;
 import org.keycloak.admin.client.resource.ComponentsResource;
 import org.keycloak.common.util.MultivaluedHashMap;
@@ -13,12 +14,11 @@ import org.keycloak.storage.ldap.mappers.membership.group.GroupMapperConfig;
 
 import java.util.Optional;
 
-@JBossLog
 @AllArgsConstructor
 public class DevntActiveDirectoryConfiguration {
     private static final String COMPONENT_TYPE = "org.keycloak.storage.UserStorageProvider";
-
     private static final String IDP_PROVIDERID = "ldap";
+    private static final Logger logger = Logger.getLogger(DevntActiveDirectoryConfiguration.class);
 
     private DevntActiveDirectoryConfigurationOptions options;
     private ComponentsResource _componentsResource;
@@ -52,7 +52,7 @@ public class DevntActiveDirectoryConfiguration {
         var response = componentsResource.add(representation);
 
         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            log.error(String.format("Request URI: %s\n" +
+            logger.error(String.format("Request URI: %s\n" +
                             "Response Status: %s\n",
                     "Response Body: %s",
                     response.getLocation().toString(),
@@ -129,7 +129,7 @@ public class DevntActiveDirectoryConfiguration {
         var response = componentsResource.add(representation);
 
         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            log.error(String.format("""
+            logger.error(String.format("""
                             Request URI: %s
                             Response Status: %s
                             Response Body: %s""",
@@ -166,7 +166,6 @@ public class DevntActiveDirectoryConfiguration {
         replace(config, GroupMapperConfig.MEMBEROF_LDAP_ATTRIBUTE, "memberOf");
         replace(config, GroupMapperConfig.MAPPED_GROUP_ATTRIBUTES, "");
         replace(config, GroupMapperConfig.DROP_NON_EXISTING_GROUPS_DURING_SYNC, Boolean.toString(false));
-
 
         representation.setConfig(config);
 

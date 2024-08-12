@@ -2,15 +2,15 @@ package nl.the_experts.keycloak.configuration.devnt.clients;
 
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import lombok.extern.jbosslog.JBossLog;
+import org.jboss.logging.Logger;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 
 import java.util.Arrays;
 
-@JBossLog
 @AllArgsConstructor
 public class ClientConfiguration {
+    private static final Logger logger = Logger.getLogger(ClientConfiguration.class);
 
     private final ClientConfigurationOptions options;
     private final ClientsResource resource;
@@ -36,13 +36,12 @@ public class ClientConfiguration {
 
         var response = resource.create(representation);
 
-        if(response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
+        if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
             throw new RuntimeException(String.format("Could not create client '%s'", id));
         }
 
-        log.infof("Created client '%s'", id);
+        logger.infof("Created client '%s'", id);
     }
-
 
     private void updateClient(String clientId, String authenticatorType, String clientSecret, String redirectUris) {
 
@@ -56,6 +55,5 @@ public class ClientConfiguration {
         var resource = this.resource.get(clientId);
 
         resource.update(representation);
-
     }
 }

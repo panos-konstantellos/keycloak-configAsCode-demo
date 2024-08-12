@@ -1,26 +1,19 @@
 package nl.the_experts.keycloak.configuration;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.jbosslog.JBossLog;
 import nl.the_experts.keycloak.configuration.devnt.DevntConfiguration;
 
 /**
  * Class to configure Keycloak.
  */
-@JBossLog
 @AllArgsConstructor
 public class KeycloakConfiguration {
-
     private final KeycloakConfigurationProperties configuration;
 
     /**
      * Starts configuration of Keycloak.
      */
     public void configure() {
-        log.info("-----------------------------------------------");
-        log.info("Starting Java configuration");
-        log.info("-----------------------------------------------");
-
         var keycloak = KeycloakClientBuilder.create(
                         configuration.get("KEYCLOAK_SERVER"),
                         configuration.get("KEYCLOAK_USER"),
@@ -29,9 +22,5 @@ public class KeycloakConfiguration {
                 .getClient();
 
         new DevntConfiguration(configuration, keycloak).configure();
-
-        log.info("-----------------------------------------------");
-        log.infof("Finished Java configuration without errors.");
-        log.info("-----------------------------------------------");
     }
 }
