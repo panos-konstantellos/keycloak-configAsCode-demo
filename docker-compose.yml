@@ -35,6 +35,7 @@ services:
       - KC_HOSTNAME_STRICT_HTTPS
       - KC_HEALTH_ENABLED
       - KC_METRICS_ENABLED
+      - KC_SPI_EMAIL_SENDER_PROVIDER=insecure-smtp
     restart: always
     entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
 #    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local --db postgres --db-url-host postgres --db-username ${KC_DB_USERNAME} --db-password ${KC_DB_PASSWORD}
