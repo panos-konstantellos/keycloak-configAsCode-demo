@@ -27,6 +27,7 @@ import java.util.Properties;
 import static org.keycloak.utils.StringUtil.isNotBlank;
 
 /**
+ * Ignores SMTP certificate validation and hostname verification.
  * Based on <a href="https://github.com/keycloak/keycloak/blob/main/services/src/main/java/org/keycloak/email/DefaultEmailSenderProvider.java">DefaultEmailSenderProvider</a>
  */
 final class InsecureEmailSenderProvider implements EmailSenderProvider {
