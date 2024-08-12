@@ -1,4 +1,4 @@
-package nl.the_experts.keycloak;
+package nl.the_experts.keycloak.mail;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.*;

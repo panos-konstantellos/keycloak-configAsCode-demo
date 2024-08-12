@@ -1,4 +1,4 @@
-package nl.the_experts.keycloak;
+package nl.the_experts.keycloak.mail;
 
 import org.keycloak.Config;
 import org.keycloak.email.EmailSenderProvider;

@@ -1,1 +1,1 @@
- nl.the_experts.keycloak.InsecureEmailSenderProviderFactory
+ nl.the_experts.keycloak.mail.InsecureEmailSenderProviderFactory
