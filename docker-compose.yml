@@ -1,13 +1,13 @@
-#volumes:
-#  postgres_data:
-#    driver: local
+volumes:
+  postgres_data:
+    driver: local
 
 services:
   postgres:
     image: postgres:15.4
     container_name: postgres
-#    volumes:
-#      - postgres_data:/var/lib/postgresql/data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=keycloak
       - POSTGRES_PASSWORD=${KC_DB_PASSWORD}
@@ -36,11 +36,14 @@ services:
       - KC_HEALTH_ENABLED
       - KC_METRICS_ENABLED
       - KC_SPI_EMAIL_SENDER_PROVIDER=insecure-smtp
+#      - DEBUG=true
+#      - DEBUG_PORT=*:8787
     restart: always
-    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
-#    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local --db postgres --db-url-host postgres --db-username ${KC_DB_USERNAME} --db-password ${KC_DB_PASSWORD}
+#    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
+    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local --db postgres --db-url-host postgres --db-username ${KC_DB_USERNAME} --db-password ${KC_DB_PASSWORD}
     ports:
       - "8080:8080"
+#      - "8787:8787"
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://keycloak:8080/ || exit 1" ]
       interval: 10s
