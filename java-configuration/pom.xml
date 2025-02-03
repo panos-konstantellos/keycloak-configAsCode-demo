@@ -35,12 +35,7 @@
             <artifactId>keycloak-ldap-federation</artifactId>
         </dependency>
 
-        <!--  Keycloak Version fixes-->
-        <dependency>
-            <groupId>org.apache.james</groupId>
-            <artifactId>apache-mime4j-dom</artifactId>
-        </dependency>
-
+        <!--fix versions-->
         <!--Tooling-->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -92,10 +87,13 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>nl.the_experts.keycloak.configuration.KeycloakConfigurationApplication</mainClass>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>nl.the_experts.keycloak.configuration.KeycloakConfigurationApplication
+                                    </mainClass>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/services/jakarta.ws.rs.ext.Providers</resource>
                                 </transformer>
                             </transformers>
