@@ -137,7 +137,7 @@ final class InsecureEmailSenderProvider implements EmailSenderProvider {
             transport.sendMessage(msg, new InternetAddress[]{new InternetAddress(address)});
         } catch (Exception e) {
             ServicesLogger.LOGGER.failedToSendEmail(e);
-            throw new EmailException(e);
+            throw new EmailException(e.toString());
         } finally {
             if (transport != null) {
                 try {

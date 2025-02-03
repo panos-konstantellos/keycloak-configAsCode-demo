@@ -2,7 +2,6 @@ package nl.the_experts.keycloak.configuration.devnt.userFederations;
 
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
-import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfiguration;
 import org.jboss.logging.Logger;
 import org.keycloak.admin.client.resource.ComponentResource;
 import org.keycloak.admin.client.resource.ComponentsResource;
@@ -44,17 +43,19 @@ public class DevntActiveDirectoryConfiguration {
         representation.setName(options.getName());
 
         var config = new MultivaluedHashMap<String, String>();
-        config.add("enabled", Boolean.toString(false));
-        config.add("editMode", "READ_ONLY");
+        config.add(LDAPConstants.ENABLED, Boolean.toString(false));
+        config.add(LDAPConstants.EDIT_MODE, "READ_ONLY");
 
         representation.setConfig(config);
 
         var response = componentsResource.add(representation);
 
         if (response.getStatusInfo().getFamily() != Response.Status.Family.SUCCESSFUL) {
-            logger.error(String.format("Request URI: %s\n" +
-                            "Response Status: %s\n",
-                    "Response Body: %s",
+            logger.error(String.format("""
+                            Request URI: %s
+                            Response Status: %s
+                            Response Body: %s
+                            """,
                     response.getLocation().toString(),
                     response.getStatusInfo().getFamily().toString(),
                     response.hasEntity() ? response.readEntity(String.class) : ""));
@@ -70,7 +71,6 @@ public class DevntActiveDirectoryConfiguration {
         var representation = resource.toRepresentation();
 
         var config = representation.getConfig();
-
 
         replace(config, LDAPConstants.EDIT_MODE, "READ_ONLY");
         replace(config, "importEnabled", Boolean.toString(true));
