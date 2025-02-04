@@ -13,8 +13,8 @@ services:
       - POSTGRES_PASSWORD=${KC_DB_PASSWORD}
       - POSTGRES_USER=${KC_DB_USERNAME}
     restart: always
-    ports:
-      - '5432:5432'
+#    ports:
+#      - '5432:5432'
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 10s
@@ -32,18 +32,18 @@ services:
       - KC_LOG_LEVEL
       - KEYCLOAK_ADMIN
       - KEYCLOAK_ADMIN_PASSWORD
-      - KC_HOSTNAME_STRICT_HTTPS
       - KC_HEALTH_ENABLED
       - KC_METRICS_ENABLED
       - KC_SPI_EMAIL_SENDER_PROVIDER=insecure-smtp
-#      - DEBUG=true
-#      - DEBUG_PORT=*:8787
+    #      - DEBUG=true
+    #      - DEBUG_PORT=*:8787
     restart: always
-#    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
+    #    entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local
+    #    entrypoint: /opt/keycloak/bin/kc.sh start --proxy-headers forwarded --hostname=${KC_HOSTNAME} --http-enabled=true --cache=local --db postgres --db-url-host postgres --db-username ${KC_DB_USERNAME} --db-password ${KC_DB_PASSWORD}
     entrypoint: /opt/keycloak/bin/kc.sh start-dev --http-enabled=true --cache=local --db postgres --db-url-host postgres --db-username ${KC_DB_USERNAME} --db-password ${KC_DB_PASSWORD}
     ports:
       - "8080:8080"
-#      - "8787:8787"
+    #      - "8787:8787"
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://keycloak:8080/ || exit 1" ]
       interval: 10s
