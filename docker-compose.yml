@@ -23,7 +23,7 @@ services:
 
   keycloak:
     build: .
-    image: ${REGISTRY_HOST}/keycloak-devnt
+    image: registry.corp.devnt.gr/keycloak-devnt
     container_name: keycloak
     depends_on:
       postgres:
@@ -53,7 +53,7 @@ services:
 
   keycloak-java-configuration:
     build: .
-    image: ${REGISTRY_HOST}/keycloak-devnt
+    image: registry.corp.devnt.gr/keycloak-devnt
     container_name: keycloak-config
     volumes:
       - ./java-configuration/target/java-configuration.jar:/jars/java-configuration.jar
