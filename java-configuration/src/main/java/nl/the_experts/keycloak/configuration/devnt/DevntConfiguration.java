@@ -5,6 +5,7 @@ import nl.the_experts.keycloak.configuration.KeycloakConfigurationProperties;
 import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfiguration;
 import nl.the_experts.keycloak.configuration.devnt.clients.ClientConfigurationOptions;
 import nl.the_experts.keycloak.configuration.devnt.clients.ClientOptionsValidator;
+import nl.the_experts.keycloak.configuration.devnt.clients.ProtocolMapper;
 import nl.the_experts.keycloak.configuration.devnt.realm.RealmConfiguration;
 import nl.the_experts.keycloak.configuration.devnt.realm.RealmConfigurationOptions;
 import nl.the_experts.keycloak.configuration.devnt.realm.RealmEmailOptions;
@@ -17,6 +18,7 @@ import org.jboss.logging.Logger;
 import org.keycloak.admin.client.Keycloak;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -70,12 +72,38 @@ public class DevntConfiguration {
                 .redirectUris(Optional.ofNullable(configuration.get("DEVNT_CLIENT_NEXTCLOUD_REDIRECT_URIS")).orElse("*"))
                 .build();
 
+
+        var mailCowClientOptions = ClientConfigurationOptions.builder()
+                .id(configuration.get("DEVNT_CLIENT_MAILCOW_ID"))
+                .name(configuration.get("DEVNT_CLIENT_MAILCOW_NAME"))
+                .authType(configuration.get("DEVNT_CLIENT_MAILCOW_AUTH_TYPE"))
+                .clientSECRET(configuration.get("DEVNT_CLIENT_MAILCOW_SECRET"))
+                .redirectUris(Optional.ofNullable(configuration.get("DEVNT_CLIENT_MAILCOW_REDIRECT_URIS")).orElse("*"))
+//                .serviceAccountsEnabled(true)
+//                .addMapper(ProtocolMapper.builder()
+//                        .name("mailcow_template")
+//                        .protocol("openid-connect")
+//                        .protocolMapper("oidc-usermodel-attribute-mapper")
+//                        .config(Map.of(
+//                                "introspection.token.claim", "false",
+//                                "userinfo.token.claim", "true",
+//                                "user.attribute", "mailcow_template",
+//                                "id.token.claim", "false",
+//                                "lightweight.claim", "false",
+//                                "access.token.claim", "false",
+//                                "claim.name", "mailcow_template",
+//                                "jsonType.label", "String"
+//                        ))
+//                        .build())
+                .build();
+
         var realmOptionsValidator = new RealmOptionsValidator();
         var clientConfigurationOptionsValidator = new ClientOptionsValidator();
         try {
             realmOptionsValidator.validate(realmOptions).throwIfInvalid();
             clientConfigurationOptionsValidator.validate(iotClientOptions).throwIfInvalid();
             clientConfigurationOptionsValidator.validate(nextCloudClientOptions).throwIfInvalid();
+            clientConfigurationOptionsValidator.validate(mailCowClientOptions).throwIfInvalid();
         } catch (ValidationException e) {
             logger.error("Error validating client configuration options", e);
 
@@ -106,6 +134,8 @@ public class DevntConfiguration {
         new RealmConfiguration(realmOptions, keycloak.realms()).configure();
         new ClientConfiguration(iotClientOptions, keycloak.realm(realmOptions.getName()).clients()).configure();
         new ClientConfiguration(nextCloudClientOptions, keycloak.realm(realmOptions.getName()).clients()).configure();
+        new ClientConfiguration(mailCowClientOptions, keycloak.realm(realmOptions.getName()).clients()).configure();
+
         new DevntActiveDirectoryConfiguration(adOptions, keycloak.realm(realmOptions.getName()).components()).configure();
 
         logger.info(endTemplate.formatted(realmOptions.getName()));
