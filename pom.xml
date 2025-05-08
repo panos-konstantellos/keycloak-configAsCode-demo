@@ -25,9 +25,7 @@
         <keycloak.client.version>26.0.4</keycloak.client.version>
 
         <!-- Keycloak versions fixes -->
-        <vertx.version>4.5.7</vertx.version>
         <asm.version>9.7</asm.version>
-        <smallrye-mutiny-vertx-core.version>3.15.0</smallrye-mutiny-vertx-core.version>
 
         <!-- Maven -->
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
@@ -83,30 +81,6 @@
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm-util</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>io.smallrye.reactive</groupId>
-                        <artifactId>smallrye-mutiny-vertx-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.vertx</groupId>
-                        <artifactId>vertx-auth-common</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.vertx</groupId>
-                        <artifactId>vertx-bridge-common</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.vertx</groupId>
-                        <artifactId>vertx-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.vertx</groupId>
-                        <artifactId>vertx-web-common</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>io.vertx</groupId>
-                        <artifactId>vertx-web</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -158,38 +132,6 @@
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-tree</artifactId>
                 <version>${asm.version}</version>
-            </dependency>
-
-            <!-- vertx -->
-            <dependency>
-                <groupId>io.smallrye.reactive</groupId>
-                <artifactId>smallrye-mutiny-vertx-core</artifactId>
-                <version>${smallrye-mutiny-vertx-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-auth-common</artifactId>
-                <version>${vertx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-bridge-common</artifactId>
-                <version>${vertx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-core</artifactId>
-                <version>${vertx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-web-common</artifactId>
-                <version>${vertx.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-web</artifactId>
-                <version>${vertx.version}</version>
             </dependency>
 
             <!--Tooling-->
