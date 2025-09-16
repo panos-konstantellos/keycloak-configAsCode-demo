@@ -72,7 +72,6 @@ public class DevntConfiguration {
                 .redirectUris(Optional.ofNullable(configuration.get("DEVNT_CLIENT_NEXTCLOUD_REDIRECT_URIS")).orElse("*"))
                 .build();
 
-
         var mailCowClientOptions = ClientConfigurationOptions.builder()
                 .id(configuration.get("DEVNT_CLIENT_MAILCOW_ID"))
                 .name(configuration.get("DEVNT_CLIENT_MAILCOW_NAME"))
@@ -97,6 +96,28 @@ public class DevntConfiguration {
 //                        .build())
                 .build();
 
+        var pveClientOptions = ClientConfigurationOptions.builder()
+                .id(configuration.get("DEVNT_CLIENT_PVE_ID"))
+                .name(configuration.get("DEVNT_CLIENT_PVE_NAME"))
+                .authType(configuration.get("DEVNT_CLIENT_PVE_AUTH_TYPE"))
+                .clientSECRET(configuration.get("DEVNT_CLIENT_PVE_SECRET"))
+                .redirectUris(Optional.ofNullable(configuration.get("DEVNT_CLIENT_PVE_REDIRECT_URIS")).orElse("*"))
+                .addMapper(ProtocolMapper.builder()
+                        .name("groups")
+                        .protocol("openid-connect")
+                        .protocolMapper("oidc-group-membership-mapper")
+                        .config(Map.of(
+                                "full.path", "false",
+                                "introspection.token.claim", "true",
+                                "userinfo.token.claim", "true",
+                                "id.token.claim", "true",
+                                "lightweight.claim", "false",
+                                "access.token.claim", "true",
+                                "claim.name", "groups"
+                        ))
+                        .build())
+                .build();
+
         var realmOptionsValidator = new RealmOptionsValidator();
         var clientConfigurationOptionsValidator = new ClientOptionsValidator();
         try {
@@ -104,6 +125,7 @@ public class DevntConfiguration {
             clientConfigurationOptionsValidator.validate(iotClientOptions).throwIfInvalid();
             clientConfigurationOptionsValidator.validate(nextCloudClientOptions).throwIfInvalid();
             clientConfigurationOptionsValidator.validate(mailCowClientOptions).throwIfInvalid();
+            clientConfigurationOptionsValidator.validate(pveClientOptions).throwIfInvalid();
         } catch (ValidationException e) {
             logger.error("Error validating client configuration options", e);
 
@@ -135,6 +157,7 @@ public class DevntConfiguration {
         new ClientConfiguration(iotClientOptions, keycloak.realm(realmOptions.getName()).clients()).configure();
         new ClientConfiguration(nextCloudClientOptions, keycloak.realm(realmOptions.getName()).clients()).configure();
         new ClientConfiguration(mailCowClientOptions, keycloak.realm(realmOptions.getName()).clients()).configure();
+        new ClientConfiguration(pveClientOptions, keycloak.realm(realmOptions.getName()).clients()).configure();
 
         new DevntActiveDirectoryConfiguration(adOptions, keycloak.realm(realmOptions.getName()).components()).configure();
 

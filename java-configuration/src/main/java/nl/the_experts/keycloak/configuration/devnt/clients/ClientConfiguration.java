@@ -73,7 +73,7 @@ public class ClientConfiguration {
     private void configureMapper(ProtocolMappersResource resource, ProtocolMapper protocolMapper) {
         var mappers = resource.getMappers();
 
-        if (mappers.isEmpty() || mappers.stream().noneMatch(x -> x.getName().equalsIgnoreCase("mailcow_template"))) {
+        if (mappers.isEmpty() || mappers.stream().noneMatch(x -> x.getName().equalsIgnoreCase(protocolMapper.getName()))) {
             createMapper(resource, protocolMapper.getName(), protocolMapper.getProtocol(), protocolMapper.getProtocolMapper());
         }
 
