@@ -14,6 +14,8 @@ import org.keycloak.truststore.FileTruststoreProvider;
 import org.keycloak.truststore.JSSETruststoreConfigurator;
 import org.keycloak.truststore.TruststoreProvider;
 import org.keycloak.truststore.TruststoreProviderFactory;
+import org.keycloak.utils.EmailValidationUtil;
+import org.keycloak.utils.SMTPUtil;
 import org.keycloak.vault.VaultStringSecret;
 
 import javax.net.ssl.SSLContext;
@@ -150,6 +152,12 @@ final class InsecureEmailSenderProvider implements EmailSenderProvider {
     }
 
     @Override
+    public void validate(Map<String, String> config) throws EmailException {
+        // just static configuration checking here, not really testing email
+        checkFromAddress(config.get("from"), isAllowUTF8(config));
+    }
+
+    @Override
     public void close() {
 
     }
@@ -196,6 +204,40 @@ final class InsecureEmailSenderProvider implements EmailSenderProvider {
                 props.put("mail.smtp.ssl.checkserveridentity", Boolean.FALSE.toString());
             }
         }
+    }
+
+    private static boolean isAllowUTF8(Map<String, String> config) {
+//        return "true".equals(config.get(CONFIG_ALLOW_UTF8));
+        return true;
+    }
+
+    private static String checkFromAddress(String from, boolean allowutf8) throws EmailException {
+        final String covertedFrom = convertEmail(from, allowutf8);
+        if (from == null) {
+            throw new EmailException(String.format("Invalid sender address '%s'. If the address contains UTF-8 characters in the local part please ensure the SMTP server supports the SMTPUTF8 extension and enable 'Allow UTF-8' in the email realm configuration.",
+                    from));
+        }
+        return covertedFrom;
+    }
+
+    private static String convertEmail(String email, boolean allowutf8) throws EmailException {
+        if (!EmailValidationUtil.isValidEmail(email)) {
+            return null;
+        }
+
+        if (allowutf8) {
+            // if allowutf8 the extension will manage both parts
+            return email;
+        }
+
+        // if no allowutf8, do the IDN conversion over the domain part
+        final String convertedEmail = SMTPUtil.convertIDNEmailAddress(email);
+        if (convertedEmail == null || !convertedEmail.chars().allMatch(c -> c < 128)) {
+            // now if there are non-ascii characters, we should send an error
+            return null;
+        }
+
+        return convertedEmail;
     }
 
     private static InternetAddress toInternetAddress(String email, String displayName) throws UnsupportedEncodingException, AddressException, EmailException {

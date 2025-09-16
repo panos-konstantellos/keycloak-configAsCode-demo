@@ -17,15 +17,15 @@
     <properties>
         <!-- Java & Quarkus-->
         <java.version>21</java.version>
-        <quarkus.version>3.15.2</quarkus.version>
+        <quarkus.version>3.20.2.2</quarkus.version>
         <quarkus.native.builder-image>quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:jdk-21</quarkus.native.builder-image>
 
         <!-- Keycloak -->
-        <keycloak.version>26.1.0</keycloak.version>
-        <keycloak.client.version>26.0.4</keycloak.client.version>
+        <keycloak.version>26.3.4</keycloak.version>
+        <keycloak.client.version>26.0.6</keycloak.client.version>
 
         <!-- Keycloak versions fixes -->
-        <asm.version>9.7</asm.version>
+        <asm.version>9.7.1</asm.version>
 
         <!-- Maven -->
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
@@ -59,6 +59,15 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Quarkus BOM -->
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            
             <!--Keycloak-->
             <dependency>
                 <groupId>org.keycloak</groupId>

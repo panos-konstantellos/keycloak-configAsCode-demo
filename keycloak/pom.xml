@@ -12,8 +12,20 @@
     <artifactId>keycloak</artifactId>
 
     <dependencies>
+        <!-- Quarkus BOM -->
         <dependency>
-            <!-- Keycloak Distribution -->
+            <groupId>io.smallrye.common</groupId>
+            <artifactId>smallrye-common-constraint</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.common</groupId>
+            <artifactId>smallrye-common-net</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Keycloak Distribution -->
+        <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-quarkus-dist</artifactId>
             <type>zip</type>
